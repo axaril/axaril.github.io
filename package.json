@@ -22,7 +22,7 @@
         "postcss": "^8.5.15",
         "postcss-loader": "^8.2.1",
         "react": "^19.2.7",
-        "react-dom": "^19.2.6",
+        "react-dom": "^19.2.7",
         "sass": "^1.100.0",
         "sass-loader": "^17.0.0",
         "style-loader": "^4.0.0",
