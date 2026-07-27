@@ -19,7 +19,7 @@
         "html-loader": "^5.1.0",
         "html-webpack-plugin": "^5.6.7",
         "mini-css-extract-plugin": "^2.10.2",
-        "postcss": "^8.5.22",
+        "postcss": "^8.5.23",
         "postcss-loader": "^8.2.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.8",
