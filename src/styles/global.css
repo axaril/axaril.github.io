@@ -4,7 +4,7 @@
   --fg: light-dark(#1c1917, #e7e5e4);
   --muted: light-dark(#78716c, #a8a29e);
   --rule: light-dark(#d6d3d1, #35312e);
-  --accent: light-dark(#2563eb, #60a5fa);
+  --accent: light-dark(#0a6fd6, #60a5fa);
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
@@ -59,6 +59,8 @@ main {
   padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
   border: 1px solid var(--rule);
   background: color-mix(in srgb, var(--bg) 78%, transparent);
+  /* Hard offset shadow, translucent so the dots behind it still show. */
+  box-shadow: 0.5rem 0.5rem 0 color-mix(in srgb, var(--fg) 14%, transparent);
 }
 
 main::before,
