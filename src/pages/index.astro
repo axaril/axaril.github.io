@@ -9,7 +9,7 @@ const links = [
 ];
 
 const experience = [
-  { role: "Software Engineer", org: "Pure Storage", when: "2023 – now" },
+  { role: "Software Engineer", org: "Everpure", when: "2023 – now" },
   { role: "Software Engineer Intern", org: "Green Hills Software", when: "2022" },
   { role: "Software Engineer Intern", org: "SprintRay Inc.", when: "2021" },
   { role: "Head TA, CS24", org: "Caltech", when: "2021 – 2023" },
@@ -26,7 +26,6 @@ const splashes = [
   "Bashing my head to understand OS internals...",
   "Evangelizing the Rust programming language...",
   "Voodoo programming...",
-  "Printing out my code for Elon Musk...",
   "Wishing I have time for art instead...",
   "Reaching to you about your car's extended warranty...",
   "Becoming the best that there ever was...",
@@ -53,8 +52,15 @@ const splashes = [
     <meta name="author" content="An Tran (Avarel)" />
     <meta
       name="description"
-      content="Software engineer at Pure Storage. Computer science, Caltech 2023."
+      content="Software engineer at Everpure. Computer science, Caltech 2023."
     />
+    <script is:inline>
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
     <link rel="icon" href="/favicon.ico" />
     <link
       rel="icon"
@@ -70,11 +76,13 @@ const splashes = [
   </head>
 
   <body>
+    <button type="button" class="theme-toggle" id="theme-toggle" hidden>
+    </button>
     <main>
       <header>
         <h1>An Tran</h1>
         <p class="tagline">
-          Software engineer at Pure Storage. Systems, compilers &amp; tooling,
+          Software engineer at Everpure, compilers &amp; tooling,
           machine learning, infrastructure.
         </p>
         <ul class="links">
@@ -124,6 +132,29 @@ const splashes = [
       </section>
     </main>
 
+    <script is:inline>
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme-toggle");
+      const dark = matchMedia("(prefers-color-scheme: dark)");
+      const current = () =>
+        root.dataset.theme || (dark.matches ? "dark" : "light");
+      const render = () => {
+        const next = current() === "dark" ? "light" : "dark";
+        toggle.textContent = next === "dark" ? "Dark mode" : "Light mode";
+        toggle.setAttribute("aria-label", `Switch to ${next} mode`);
+      };
+      toggle.hidden = false;
+      toggle.addEventListener("click", () => {
+        const next = current() === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem("theme", next);
+        } catch {}
+        render();
+      });
+      dark.addEventListener("change", render);
+      render();
+    </script>
     <script is:inline define:vars={{ splashes }}>
       document.getElementById("splash").textContent =
         splashes[Math.floor(Math.random() * splashes.length)];
