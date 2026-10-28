@@ -45,4 +45,6 @@ function relativeLinks() {
 export default defineConfig({
     site: "https://axaril.github.io",
     integrations: [relativeLinks()],
+    // Emit scripts as separate files instead of inlining small bundles into the HTML.
+    vite: { build: { assetsInlineLimit: 0 } },
 });
