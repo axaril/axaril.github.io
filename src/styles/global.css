@@ -1,34 +1,20 @@
 :root {
   color-scheme: light dark;
-  --bg: #fafaf9;
-  --fg: #1c1917;
-  --muted: #78716c;
-  --rule: #d6d3d1;
-  --accent: #2563eb;
+  --bg: light-dark(#fafaf9, #0c0a09);
+  --fg: light-dark(#1c1917, #e7e5e4);
+  --muted: light-dark(#78716c, #a8a29e);
+  --rule: light-dark(#d6d3d1, #35312e);
+  --accent: light-dark(#2563eb, #60a5fa);
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* The toggle pins a scheme; otherwise light-dark() follows the system. */
 :root[data-theme="light"] {
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0a09;
-  --fg: #e7e5e4;
-  --muted: #a8a29e;
-  --rule: #35312e;
-  --accent: #60a5fa;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0c0a09;
-    --fg: #e7e5e4;
-    --muted: #a8a29e;
-    --rule: #35312e;
-    --accent: #60a5fa;
-  }
 }
 
 * {
@@ -53,12 +39,12 @@ body {
   outline-offset: 2px;
 }
 
+/* dots.ts sizes the canvas in pixels. */
 #dots {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: -1;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
 }
 

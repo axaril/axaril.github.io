@@ -31,7 +31,9 @@ for (let i = shuffled.length - 1; i > 0; i--) {
   [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 }
 
-const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+function sleep(ms: number) {
+  return new Promise((done) => setTimeout(done, ms));
+}
 
 // Types each line out, holds it, then erases it.
 async function run(el: HTMLElement) {

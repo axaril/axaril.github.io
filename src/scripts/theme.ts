@@ -2,21 +2,23 @@ const root = document.documentElement;
 const toggle = document.getElementById("theme-toggle") as HTMLButtonElement;
 const dark = matchMedia("(prefers-color-scheme: dark)");
 
-const current = () => root.dataset.theme || (dark.matches ? "dark" : "light");
+function current() {
+  return root.dataset.theme || (dark.matches ? "dark" : "light");
+}
 
-const render = () => {
+function render() {
   const next = current() === "dark" ? "light" : "dark";
   toggle.dataset.next = next;
   toggle.setAttribute("aria-label", `Switch to ${next} mode`);
-};
+}
 
-const apply = (next: string) => {
+function apply(next: string) {
   root.dataset.theme = next;
   try {
     localStorage.setItem("theme", next);
   } catch {}
   render();
-};
+}
 
 toggle.hidden = false;
 toggle.addEventListener("click", () => {
