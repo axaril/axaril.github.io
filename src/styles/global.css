@@ -62,10 +62,17 @@ a:focus-visible {
 
 h1 {
   margin: 0;
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: clamp(2.75rem, 14vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  white-space: nowrap;
+  width: fit-content;
+  padding-bottom: 0.08em;
+  background: linear-gradient(110deg, var(--fg) 10%, var(--accent) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 h2 {
@@ -120,7 +127,7 @@ p {
 }
 
 .tagline {
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
   color: var(--muted);
 }
 
