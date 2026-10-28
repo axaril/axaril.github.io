@@ -1,20 +1,5 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist/",
-        "target": "es2016",
-        "module": "es6",
-        "moduleResolution": "node",
-        // Strict type checking
-        "strict": true,
-        "noImplicitReturns": true,
-        // Other goodies
-        "removeComments": true,
-        "sourceMap": true,
-        "esModuleInterop": true,
-        "jsx": "react"
-    },
-    "include": [
-        "./src/**/*",
-    ],
-    "exclude": []
+    "extends": "astro/tsconfigs/strict",
+    "include": [".astro/types.d.ts", "**/*"],
+    "exclude": ["dist"]
 }

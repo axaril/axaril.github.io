@@ -1,6 +1,3 @@
-import "./reset.css";
-import "./index.scss";
-
 import Typed from "typed.js";
 
 new Typed("#splash", {

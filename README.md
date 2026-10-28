@@ -1,10 +1,13 @@
-# ReactTS Template
-* HTML templating with **Pug**.
-* CSS templating with **SCSS/Sass**.
-* Scalable JS with **TypeScript** and **ReactJS**.
-* Production and development Webpack configurations.
+# axaril.github.io
+
+Personal site, built with [Astro](https://astro.build) and deployed to GitHub Pages.
+
+* `src/pages/` — pages (each `.astro` file becomes an HTML page).
+* `src/styles/` — SCSS/CSS.
+* `src/scripts/` — TypeScript bundled into the pages.
+* `public/` — static files copied as-is (images, icons, resume).
 
 ## NPM Scripts
-* `npm run build` to build the `/dist` folder under production configuration.
-* `npm run build:dev` to build the `/dist` folder under development configuration.
-* `npm run start` to start the development server.
+* `npm run dev` to start the development server (`npm start` also opens a browser).
+* `npm run build` to build the static site into `/dist`.
+* `npm run preview` to serve the built `/dist` locally.
