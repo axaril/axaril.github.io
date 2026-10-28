@@ -14,7 +14,7 @@
         "preview": "astro preview"
     },
     "dependencies": {
-        "astro": "^5.18.2",
+        "astro": "^7.4.2",
         "typed.js": "^2.1.0"
     },
     "devDependencies": {
