@@ -86,40 +86,42 @@ const experience = [
         </ul>
       </header>
 
-      <section>
-        <h2>Experience</h2>
-        <ul class="entries">
-          {
-            experience.map((e) => (
-              <li>
-                <span class="what">
-                  {e.role}
-                  <small>{e.org}</small>
-                </span>
-                <span class="when">{e.when}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+      <div class="details">
+        <section>
+          <h2>Experience</h2>
+          <ul class="entries">
+            {
+              experience.map((e) => (
+                <li>
+                  <span class="what">
+                    {e.role}
+                    <small>{e.org}</small>
+                  </span>
+                  <span class="when">{e.when}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
 
-      <section>
-        <h2>Education</h2>
-        <ul class="entries">
-          <li>
-            <span class="what">
-              B.S. Computer Science
-              <small>California Institute of Technology</small>
-            </span>
-            <span class="when">2023</span>
-          </li>
-        </ul>
-      </section>
+        <section>
+          <h2>Education</h2>
+          <ul class="entries">
+            <li>
+              <span class="what">
+                B.S. Computer Science
+                <small>California Institute of Technology</small>
+              </span>
+              <span class="when">2023</span>
+            </li>
+          </ul>
+        </section>
 
-      <section>
-        <h2>Currently working on</h2>
-        <code id="splash">Waiting for my code to compile...</code>
-      </section>
+        <section>
+          <h2>Currently working on</h2>
+          <code id="splash">Waiting for my code to compile...</code>
+        </section>
+      </div>
     </main>
 
     <script>

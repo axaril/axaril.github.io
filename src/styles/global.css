@@ -300,6 +300,29 @@ p {
   }
 }
 
+/* Desktop: name and links on the left, details on the right. */
+@media (min-width: 52rem) {
+  body {
+    display: flex;
+    min-height: 100dvh;
+    align-items: center;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 26rem);
+    gap: 3.5rem;
+    align-items: start;
+    width: fit-content;
+    max-width: calc(100% - 4rem);
+    margin: 2rem auto;
+  }
+
+  .details > section:first-child h2 {
+    margin-top: 0;
+  }
+}
+
 @media (max-width: 30rem) {
   .entries li {
     flex-direction: column;
