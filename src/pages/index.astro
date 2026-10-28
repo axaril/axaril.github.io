@@ -126,8 +126,10 @@ const experience = [
 
     <script>
       import "../scripts/theme.ts";
-      import "../scripts/dots.ts";
+      import { DotGrid } from "../scripts/dots.ts";
       import "../scripts/splash.ts";
+
+      new DotGrid(document.getElementById("dots") as HTMLCanvasElement);
     </script>
   </body>
 </html>
