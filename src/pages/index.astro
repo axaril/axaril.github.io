@@ -2,10 +2,10 @@
 import "../styles/global.css";
 
 const links = [
-  { label: "Resume", href: "/assets/resume.pdf" },
-  { label: "GitHub", href: "https://github.com/Axaril" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/an-tran-ct" },
-  { label: "Email", href: "mailto:antran.ct@proton.me" },
+  { label: "Resume", href: "/assets/resume.pdf", hint: "PDF" },
+  { label: "GitHub", href: "https://github.com/Axaril", hint: "Axaril" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/an-tran-ct", hint: "an-tran-ct" },
+  { label: "Email", href: "mailto:antran.ct@proton.me", hint: "antran.ct@proton.me" },
 ];
 
 const experience = [
@@ -54,18 +54,18 @@ const experience = [
 
   <body>
     <canvas id="dots" aria-hidden="true"></canvas>
-    <button type="button" class="theme-toggle" id="theme-toggle" hidden>
-      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="4"></circle>
-        <path
-          d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
-        ></path>
-      </svg>
-      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
-      </svg>
-    </button>
     <main>
+      <button type="button" class="theme-toggle" id="theme-toggle" hidden>
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path
+            d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+          ></path>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
       <header>
         <h1>An Tran</h1>
         <p class="tagline">
@@ -76,7 +76,10 @@ const experience = [
           {
             links.map((l) => (
               <li>
-                <a href={l.href}>{l.label}</a>
+                <a href={l.href}>
+                  <span>{l.label}</span>
+                  <span class="hint">{l.hint}</span>
+                </a>
               </li>
             ))
           }

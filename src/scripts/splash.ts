@@ -23,6 +23,39 @@ const splashes = [
 ];
 
 const splash = document.getElementById("splash");
-if (splash) splash.textContent = splashes[Math.floor(Math.random() * splashes.length)];
+
+// Fisher-Yates, so each visit shows the lines in a different order.
+const shuffled = [...splashes];
+for (let i = shuffled.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+}
+
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+
+// Types each line out, holds it, then erases it.
+async function run(el: HTMLElement) {
+  for (let i = 0; ; i++) {
+    const line = shuffled[i % shuffled.length];
+    for (let n = 1; n <= line.length; n++) {
+      el.textContent = line.slice(0, n);
+      await sleep(28);
+    }
+    await sleep(2400);
+    for (let n = line.length - 1; n >= 0; n--) {
+      el.textContent = line.slice(0, n);
+      await sleep(10);
+    }
+    await sleep(300);
+  }
+}
+
+if (splash) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    splash.textContent = shuffled[0];
+  } else {
+    run(splash);
+  }
+}
 
 export {};

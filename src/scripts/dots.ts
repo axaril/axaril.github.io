@@ -34,9 +34,8 @@ const draw = () => {
       const push = d ? (t * 10) / d : 0;
       ctx.globalAlpha = 0.14 + t * 0.7;
       ctx.fillStyle = t > 0.02 ? accent : base;
-      ctx.beginPath();
-      ctx.arc(x + dx * push, y + dy * push, 0.9 + t * 2, 0, 7);
-      ctx.fill();
+      const half = 0.9 + t * 2;
+      ctx.fillRect(x + dx * push - half, y + dy * push - half, half * 2, half * 2);
     }
   }
 };
