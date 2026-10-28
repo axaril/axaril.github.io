@@ -14,11 +14,11 @@
         "preview": "astro preview"
     },
     "dependencies": {
-        "astro": "^5.18.2",
-        "typed.js": "^2.1.0"
+        "astro": "^7.4.2",
+        "typed.js": "^3.0.0"
     },
     "devDependencies": {
         "sass": "^1.83.1",
-        "typescript": "^5.7.3"
+        "typescript": "^7.0.2"
     }
 }
