@@ -184,3 +184,18 @@ p {
     gap: 0;
   }
 }
+
+/* Theme switch: the script animates the new snapshot's clip-path. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
