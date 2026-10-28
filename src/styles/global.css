@@ -1,6 +1,6 @@
 :root {
   color-scheme: light dark;
-  --bg: light-dark(#fafaf9, #0c0a09);
+  --bg: light-dark(#fafaf9, black);
   --fg: light-dark(#1c1917, #e7e5e4);
   --muted: light-dark(#78716c, #a8a29e);
   --rule: light-dark(#d6d3d1, #35312e);
@@ -306,6 +306,9 @@ p {
 
   /* The band becomes a full-height sidebar flush with the panel edges. */
   header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-self: stretch;
     margin: calc(-1 * var(--pad-top)) -2rem calc(-1 * var(--pad-bottom)) calc(-1 * var(--pad-x));
     padding: var(--pad-top) 2rem var(--pad-bottom) var(--pad-x);
