@@ -8,6 +8,19 @@ export type DotGridOptions = {
   accentVar?: string;
 };
 
+type Ripple = { start: number; x: number; y: number };
+
+// An occasional ripple: a ring of swaying dots spreads out from a random point.
+const RIPPLE = {
+  amp: 8, // px, peak push along the ring's radius
+  tint: 1, // extra accent-colored opacity at peak push
+  width: 70, // px, how thick the ring is
+  k: (2 * Math.PI) / 56, // radians per px, crest to crest within the ring
+  speed: 0.2, // px per ms the ring spreads
+  duration: 3500, // ms, the ring fades out over this
+  pause: 5000, // ms, minimum wait (plus up to as much again) between ripples
+};
+
 // Faint dot grid; dots near the pointer or finger swell and light up.
 export class DotGrid {
   private readonly ctx: CanvasRenderingContext2D;
@@ -31,6 +44,8 @@ export class DotGrid {
   private resizing = 0;
   private moved = false;
   private last: Box | null = null;
+  private now = 0;
+  private ripple: Ripple | null = null;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -52,7 +67,10 @@ export class DotGrid {
     });
     matchMedia("(prefers-color-scheme: dark)").addEventListener("change", this.recolor);
 
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) this.listen();
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.listen();
+      setTimeout(this.startRipple, RIPPLE.pause);
+    }
   }
 
   private listen() {
@@ -91,21 +109,62 @@ export class DotGrid {
         const d = Math.hypot(dx, dy);
         const t = Math.max(0, 1 - d / radius) ** 2 * glow.strength;
         const push = d ? (t * 10) / d : 0;
-        const fill = t > 0.02 ? colors.accent : colors.base;
+        // Dots on the ring are pushed along its radius and take on a faint accent tint.
+        let rx = 0;
+        let ry = 0;
+        let tint = 0;
+        if (this.ripple) {
+          const ox = x - this.ripple.x;
+          const oy = y - this.ripple.y;
+          const od = Math.hypot(ox, oy);
+          const s = od ? this.push(od) : 0;
+          rx = (ox / od) * s || 0;
+          ry = (oy / od) * s || 0;
+          tint = Math.abs(s) / RIPPLE.amp;
+        }
+        const fill = t > 0.02 || tint > 0.08 ? colors.accent : colors.base;
         if (fill !== style) ctx.fillStyle = style = fill;
-        ctx.globalAlpha = 0.14 + t * 0.7;
+        ctx.globalAlpha = 0.14 + t * 0.7 + tint * RIPPLE.tint;
         const half = 0.9 + t * 2;
-        ctx.fillRect(x + dx * push - half, y + dy * push - half, half * 2, half * 2);
+        ctx.fillRect(x + rx + dx * push - half, y + ry + dy * push - half, half * 2, half * 2);
       }
     }
   }
+
+  // How far the ripple pushes a dot that is `d` px from its origin.
+  private push(d: number) {
+    const { ripple, now } = this;
+    if (!ripple) return 0;
+    const age = now - ripple.start;
+    const p = age / RIPPLE.duration;
+    if (p >= 1) return 0;
+    const u = d - age * RIPPLE.speed;
+    const ring = Math.exp(-((u / RIPPLE.width) ** 2));
+    return RIPPLE.amp * (1 - p) ** 2 * ring * Math.sin(u * RIPPLE.k);
+  }
+
+  // Area the ripple has reached so far.
+  private spread(): Box {
+    const { ripple, now } = this;
+    const { x, y } = ripple as Ripple;
+    const reach = (now - (ripple as Ripple).start) * RIPPLE.speed + RIPPLE.width * 2.5 + RIPPLE.amp;
+    return this.around(x, y, reach);
+  }
+
+  // Starts a ripple at a random point, then lines up the next one.
+  private startRipple = () => {
+    const { width, height } = this.view;
+    this.ripple = { start: performance.now(), x: Math.random() * width, y: Math.random() * height };
+    this.wake();
+    setTimeout(this.startRipple, RIPPLE.pause + Math.random() * RIPPLE.pause);
+  };
 
   private snap(v: number, max: number, round: (n: number) => number) {
     return Math.min(Math.max(round(v / this.gap) * this.gap, 0), max);
   }
 
-  private around(x: number, y: number): Box {
-    const { gap, reach, view } = this;
+  private around(x: number, y: number, reach = this.reach): Box {
+    const { gap, view } = this;
     const maxX = Math.ceil(view.width / gap) * gap;
     const maxY = Math.ceil(view.height / gap) * gap;
     return {
@@ -122,6 +181,7 @@ export class DotGrid {
 
   private tick = () => {
     const { glow, last } = this;
+    this.now = performance.now();
     glow.strength += (glow.target - glow.strength) * 0.14;
     const settled = Math.abs(glow.target - glow.strength) < 0.004;
     if (settled) glow.strength = glow.target;
@@ -140,7 +200,13 @@ export class DotGrid {
     );
     this.last = box;
 
-    this.frame = settled && !this.moved ? 0 : requestAnimationFrame(this.tick);
+    if (this.ripple) {
+      this.paint(this.spread());
+      // The frame past the end paints the dots back at rest.
+      if (this.now - this.ripple.start >= RIPPLE.duration) this.ripple = null;
+    }
+
+    this.frame = settled && !this.moved && !this.ripple ? 0 : requestAnimationFrame(this.tick);
     this.moved = false;
   };
 
@@ -166,7 +232,8 @@ export class DotGrid {
   private resize() {
     const { canvas, view } = this;
     if (innerWidth === view.width && innerHeight <= view.height) return;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    // The dots are tiny and faint, so full-resolution pixels aren't worth 4x the memory.
+    const dpr = 1;
     view.width = innerWidth;
     view.height = innerHeight;
     canvas.width = view.width * dpr;
