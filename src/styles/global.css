@@ -50,10 +50,13 @@ body {
 
 /* Framed panel with bracketed top-left and bottom-right corners. */
 main {
+  --pad-x: clamp(1.25rem, 5vw, 3rem);
+  --pad-top: 3.5rem;
+  --pad-bottom: clamp(1.5rem, 5vw, 3rem);
   position: relative;
   width: min(40rem, 100% - 2rem);
   margin: clamp(1rem, 6vh, 4rem) auto;
-  padding: 3.5rem clamp(1.25rem, 5vw, 3rem) clamp(1.5rem, 5vw, 3rem);
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
   border: 1px solid var(--rule);
   background: color-mix(in srgb, var(--bg) 78%, transparent);
 }
@@ -82,6 +85,13 @@ main::after {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Faint azure tint bleeding to the panel edges. */
+header {
+  margin: calc(-1 * var(--pad-top)) calc(-1 * var(--pad-x)) 0;
+  padding: var(--pad-top) var(--pad-x) 1.5rem;
+  background: color-mix(in srgb, #0a6fd6 20%, transparent);
 }
 
 h1 {
@@ -123,6 +133,7 @@ p {
 
 .theme-toggle {
   position: absolute;
+  z-index: 1;
   top: 0.75rem;
   right: 0.75rem;
   display: grid;
@@ -165,47 +176,41 @@ p {
   color: var(--muted);
 }
 
-/* Menu rows: the hovered row inverts and gains a marker. */
-.links {
-  margin: 1.5rem 0 0;
+/* Ruled lists: .links are menu rows whose hovered row inverts. */
+.links,
+.entries {
+  margin: 0;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--rule);
 }
 
-.links li {
+.links li,
+.entries li {
   border-bottom: 1px solid var(--rule);
+}
+
+.links {
+  margin-top: 1.5rem;
 }
 
 .links a {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0;
   font-family: var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.links a > :first-child::before {
-  content: "▶";
-  display: inline-block;
-  width: 1.4em;
-  font-size: 0.7em;
-  vertical-align: 0.1em;
-  opacity: 0;
-}
-
+/* Text stays flush with the heading; the highlight bleeds out sideways. */
 .links a:hover,
 .links a:focus-visible {
   background: var(--fg);
   color: var(--bg);
   outline-offset: 0;
-}
-
-.links a:hover > :first-child::before,
-.links a:focus-visible > :first-child::before {
-  opacity: 1;
+  box-shadow: -0.75rem 0 0 var(--fg), 0.75rem 0 0 var(--fg);
 }
 
 .links .hint {
@@ -225,19 +230,11 @@ p {
   color: inherit;
 }
 
-.entries {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--rule);
-}
-
 .entries li {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--rule);
 }
 
 .entries .when {
@@ -295,16 +292,26 @@ p {
   }
 
   main {
+    --pad-top: 3rem;
+    --pad-bottom: 3rem;
+    --pad-x: 3rem;
     display: grid;
     grid-template-columns: minmax(0, 20rem) minmax(0, 26rem);
-    gap: 3.5rem;
+    gap: 4.5rem;
     align-items: start;
     width: fit-content;
     max-width: calc(100% - 4rem);
     margin: 2rem auto;
   }
 
-  .details > section:first-child h2 {
+  /* The band becomes a full-height sidebar flush with the panel edges. */
+  header {
+    align-self: stretch;
+    margin: calc(-1 * var(--pad-top)) -2rem calc(-1 * var(--pad-bottom)) calc(-1 * var(--pad-x));
+    padding: var(--pad-top) 2rem var(--pad-bottom) var(--pad-x);
+  }
+
+  .details>section:first-child h2 {
     margin-top: 0;
   }
 }
