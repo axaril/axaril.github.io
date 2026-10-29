@@ -5,6 +5,7 @@
   --muted: light-dark(#78716c, #a8a29e);
   --rule: light-dark(#d6d3d1, #35312e);
   --accent: #0065d8;
+  --accent-shift: #00a8b5;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --row-leading: 1.9;
@@ -102,10 +103,48 @@ header {
   /* Darker faded text and rules so they stay legible on the stronger light tint. */
   --muted: light-dark(#292524, #a8a29e);
   --rule: light-dark(rgb(28 25 23 / 0.35), rgb(231 229 228 / 0.3));
-  background: light-dark(
+  --tint-a: light-dark(
     color-mix(in srgb, var(--accent) var(--header-tint-light), transparent),
     color-mix(in srgb, var(--accent) var(--header-tint-dark), transparent)
   );
+  --tint-b: light-dark(
+    color-mix(in srgb, var(--accent-shift) var(--header-tint-light), transparent),
+    color-mix(in srgb, var(--accent-shift) var(--header-tint-dark), transparent)
+  );
+  /* Two soft blobs wander over the base tint, the second mirroring the first. */
+  background:
+    radial-gradient(ellipse 80% 80% at var(--blob-x) var(--blob-y), var(--tint-b), transparent),
+    radial-gradient(ellipse 80% 80% at calc(100% - var(--blob-x)) calc(100% - var(--blob-y)), var(--tint-b), transparent),
+    var(--tint-a);
+  animation:
+    blob-x 17s ease-in-out infinite alternate,
+    blob-y 11s ease-in-out infinite alternate;
+}
+
+/* Registered so the browser can interpolate the blob position. x and y run on different
+   periods so the path never visibly repeats. */
+@property --blob-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 10%;
+}
+
+@property --blob-y {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 20%;
+}
+
+@keyframes blob-x {
+  to {
+    --blob-x: 90%;
+  }
+}
+
+@keyframes blob-y {
+  to {
+    --blob-y: 80%;
+  }
 }
 
 h1 {
@@ -345,6 +384,7 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  header,
   #splash::after {
     animation: none;
   }
