@@ -395,16 +395,18 @@ p {
 
 /* Desktop: name and links on the left, details on the right. */
 @media (min-width: 52rem) {
-  /* The first row fills the viewport and centers the panel in it, as if the cards weren't
-     there. The cards start below the fold and the page scrolls to reach them. */
+  /* Auto margins center the panel and cards when they fit; otherwise they collapse and the
+     page flows from the top, scrolling as needed. */
+  body {
+    display: flex;
+    min-height: 100dvh;
+    padding-block: 2rem;
+  }
+
   .page {
-    display: grid;
-    grid-template-rows: minmax(calc(100dvh - 4rem), auto) auto;
-    align-content: start;
     width: fit-content;
     max-width: calc(100% - 4rem);
-    margin: 0 auto;
-    padding-block: 2rem;
+    margin: auto;
   }
 
   main {
@@ -415,14 +417,12 @@ p {
     grid-template-columns: minmax(0, 20rem) minmax(0, 26rem);
     gap: 4.5rem;
     align-items: start;
-    align-self: center;
   }
 
   /* Zero base width so the cards follow the panel's width instead of widening it. */
   .projects {
     width: 0;
     min-width: 100%;
-    margin-top: 0;
   }
 
   /* The band becomes a full-height sidebar flush with the panel edges. */
