@@ -1,7 +1,7 @@
 const splashes = [
   "Learning how to setup GPU pipelines...",
   "Debugging my personal death ray code...",
-  "Crying because concurrent programming is hard...",
+  "Summoning velociraptors through concurrency...",
   "Bashing my head to understand OS internals...",
   "Evangelizing the Rust programming language...",
   "Wishing I have time for art instead...",
