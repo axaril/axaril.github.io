@@ -12,13 +12,14 @@ type Ripple = { start: number; x: number; y: number };
 
 // An occasional ripple: a ring of swaying dots spreads out from a random point.
 const RIPPLE = {
-  amp: 8, // px, peak push along the ring's radius
+  amp: 12, // px, peak push along the ring's radius
   tint: 1, // extra accent-colored opacity at peak push
   width: 70, // px, how thick the ring is
   k: (2 * Math.PI) / 56, // radians per px, crest to crest within the ring
   speed: 0.2, // px per ms the ring spreads
   duration: 3500, // ms, the ring fades out over this
-  pause: 5000, // ms, minimum wait (plus up to as much again) between ripples
+  max: 6, // simultaneous ripples; the oldest is dropped past this
+  pause: 2000, // ms, minimum wait (plus up to as much again) between ripples
 };
 
 // Faint dot grid; dots near the pointer or finger swell and light up.
@@ -45,7 +46,7 @@ export class DotGrid {
   private moved = false;
   private last: Box | null = null;
   private now = 0;
-  private ripple: Ripple | null = null;
+  private ripples: Ripple[] = [];
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -77,6 +78,7 @@ export class DotGrid {
     addEventListener("pointermove", (e) => {
       if (e.pointerType !== "touch") this.aim(e.clientX, e.clientY);
     });
+    addEventListener("pointerdown", (e) => this.ripplePoint(e.clientX, e.clientY));
     this.root.addEventListener("mouseleave", this.release);
     const touch = (e: TouchEvent) =>
       this.aim(e.touches[0].clientX, e.touches[0].clientY);
@@ -113,29 +115,27 @@ export class DotGrid {
         let rx = 0;
         let ry = 0;
         let tint = 0;
-        if (this.ripple) {
-          const ox = x - this.ripple.x;
-          const oy = y - this.ripple.y;
+        for (const ripple of this.ripples) {
+          const ox = x - ripple.x;
+          const oy = y - ripple.y;
           const od = Math.hypot(ox, oy);
-          const s = od ? this.push(od) : 0;
-          rx = (ox / od) * s || 0;
-          ry = (oy / od) * s || 0;
-          tint = Math.abs(s) / RIPPLE.amp;
+          const s = od ? this.push(od, ripple) : 0;
+          rx += (ox / od) * s || 0;
+          ry += (oy / od) * s || 0;
+          tint += Math.abs(s) / RIPPLE.amp;
         }
         const fill = t > 0.02 || tint > 0.08 ? colors.accent : colors.base;
         if (fill !== style) ctx.fillStyle = style = fill;
-        ctx.globalAlpha = 0.14 + t * 0.7 + tint * RIPPLE.tint;
-        const half = 0.9 + t * 2;
+        ctx.globalAlpha = Math.min(1, 0.28 + t * 0.6 + tint * RIPPLE.tint);
+        const half = 1.1 + t * 2 + tint * 0.8;
         ctx.fillRect(x + rx + dx * push - half, y + ry + dy * push - half, half * 2, half * 2);
       }
     }
   }
 
   // How far the ripple pushes a dot that is `d` px from its origin.
-  private push(d: number) {
-    const { ripple, now } = this;
-    if (!ripple) return 0;
-    const age = now - ripple.start;
+  private push(d: number, ripple: Ripple) {
+    const age = this.now - ripple.start;
     const p = age / RIPPLE.duration;
     if (p >= 1) return 0;
     const u = d - age * RIPPLE.speed;
@@ -144,20 +144,24 @@ export class DotGrid {
   }
 
   // Area the ripple has reached so far.
-  private spread(): Box {
-    const { ripple, now } = this;
-    const { x, y } = ripple as Ripple;
-    const reach = (now - (ripple as Ripple).start) * RIPPLE.speed + RIPPLE.width * 2.5 + RIPPLE.amp;
+  private spread({ x, y, start }: Ripple): Box {
+    const reach = (this.now - start) * RIPPLE.speed + RIPPLE.width * 2.5 + RIPPLE.amp;
     return this.around(x, y, reach);
   }
 
   // Starts a ripple at a random point, then lines up the next one.
   private startRipple = () => {
     const { width, height } = this.view;
-    this.ripple = { start: performance.now(), x: Math.random() * width, y: Math.random() * height };
-    this.wake();
+    this.ripplePoint(Math.random() * width, Math.random() * height);
     setTimeout(this.startRipple, RIPPLE.pause + Math.random() * RIPPLE.pause);
   };
+
+  // Ripples overlap, each fading out on its own clock.
+  private ripplePoint(x: number, y: number) {
+    this.ripples.push({ start: performance.now(), x, y });
+    if (this.ripples.length > RIPPLE.max) this.ripples.shift();
+    this.wake();
+  }
 
   private snap(v: number, max: number, round: (n: number) => number) {
     return Math.min(Math.max(round(v / this.gap) * this.gap, 0), max);
@@ -175,6 +179,15 @@ export class DotGrid {
     };
   }
 
+  private union(a: Box, b: Box): Box {
+    return {
+      x0: Math.min(a.x0, b.x0),
+      y0: Math.min(a.y0, b.y0),
+      x1: Math.max(a.x1, b.x1),
+      y1: Math.max(a.y1, b.y1),
+    };
+  }
+
   private full(): Box {
     return { x0: 0, y0: 0, x1: this.view.width, y1: this.view.height };
   }
@@ -186,27 +199,16 @@ export class DotGrid {
     const settled = Math.abs(glow.target - glow.strength) < 0.004;
     if (settled) glow.strength = glow.target;
 
-    // Repaint where the lit dots were last frame and where they are now.
+    // One repaint covers where the lit dots were last frame and are now, and every ripple.
     const box = this.around(this.pointer.x, this.pointer.y);
-    this.paint(
-      last
-        ? {
-            x0: Math.min(box.x0, last.x0),
-            y0: Math.min(box.y0, last.y0),
-            x1: Math.max(box.x1, last.x1),
-            y1: Math.max(box.y1, last.y1),
-          }
-        : box,
-    );
     this.last = box;
+    let dirty = last ? this.union(box, last) : box;
+    for (const ripple of this.ripples) dirty = this.union(dirty, this.spread(ripple));
+    this.paint(dirty);
+    // The frame past a ripple's end paints its dots back at rest.
+    this.ripples = this.ripples.filter((r) => this.now - r.start < RIPPLE.duration);
 
-    if (this.ripple) {
-      this.paint(this.spread());
-      // The frame past the end paints the dots back at rest.
-      if (this.now - this.ripple.start >= RIPPLE.duration) this.ripple = null;
-    }
-
-    this.frame = settled && !this.moved && !this.ripple ? 0 : requestAnimationFrame(this.tick);
+    this.frame = settled && !this.moved && !this.ripples.length ? 0 : requestAnimationFrame(this.tick);
     this.moved = false;
   };
 
