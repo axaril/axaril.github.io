@@ -15,6 +15,12 @@ const experience = [
   { role: "Head Teaching Assistant, CS24", org: "Caltech", when: "2021 - 2023" },
 ];
 
+// Scaffolding: fill in the real projects.
+const projects = [
+  { title: "Silicate", blurb: "Pure Rust GPU image compositor for Procreate file format.", href: "https://github.com/axaril/silicate", hint: "github.com/Axaril/…" },
+  { title: "bvr", blurb: "Chew through logs with a pager written in Rust.", href: "https://github.com/axaril/bvr", hint: "github.com/Axaril/…" },
+];
+
 ---
 
 <!doctype html>
@@ -52,6 +58,7 @@ const experience = [
 
   <body>
     <canvas id="dots" aria-hidden="true"></canvas>
+    <div class="page">
     <main>
       <button type="button" class="theme-toggle" id="theme-toggle" hidden>
         <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
@@ -121,6 +128,21 @@ const experience = [
         </section>
       </div>
     </main>
+
+    <ul class="projects">
+      {
+        projects.map((p) => (
+          <li>
+            <a class="card" href={p.href}>
+              <h3>{p.title}</h3>
+              <p>{p.blurb}</p>
+              <span class="hint">{p.hint}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    </div>
 
     <script>
       import "../scripts/theme.ts";
