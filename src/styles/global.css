@@ -4,8 +4,13 @@
   --fg: light-dark(#1c1917, #e7e5e4);
   --muted: light-dark(#78716c, #a8a29e);
   --rule: light-dark(#d6d3d1, #35312e);
-  --accent: light-dark(#0a6fd6, #60a5fa);
+  --accent: #0065d8;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --row-leading: 1.9;
+  --corner-size: 14px;
+  --header-tint-light: 60%;
+  --header-tint-dark: 30%;
 }
 
 /* The toggle pins a scheme; otherwise light-dark() follows the system. */
@@ -65,23 +70,24 @@ main {
 
 main::before,
 main::after {
+  --bracket: 2px;
   content: "";
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: var(--corner-size);
+  height: var(--corner-size);
   border: 0 solid var(--fg);
 }
 
 main::before {
   top: -1px;
   left: -1px;
-  border-width: 2px 0 0 2px;
+  border-width: var(--bracket) 0 0 var(--bracket);
 }
 
 main::after {
   right: -1px;
   bottom: -1px;
-  border-width: 0 2px 2px 0;
+  border-width: 0 var(--bracket) var(--bracket) 0;
 }
 
 a {
@@ -93,7 +99,13 @@ a {
 header {
   margin: calc(-1 * var(--pad-top)) calc(-1 * var(--pad-x)) 0;
   padding: var(--pad-top) var(--pad-x) 1.5rem;
-  background: color-mix(in srgb, #0a6fd6 20%, transparent);
+  /* Darker faded text and rules so they stay legible on the stronger light tint. */
+  --muted: light-dark(#292524, #a8a29e);
+  --rule: light-dark(rgb(28 25 23 / 0.35), rgb(231 229 228 / 0.3));
+  background: light-dark(
+    color-mix(in srgb, var(--accent) var(--header-tint-light), transparent),
+    color-mix(in srgb, var(--accent) var(--header-tint-dark), transparent)
+  );
 }
 
 h1 {
@@ -220,7 +232,7 @@ p {
   overflow: hidden;
   color: var(--muted);
   font-size: 0.8rem;
-  line-height: 1.9;
+  line-height: var(--row-leading);
   letter-spacing: 0.02em;
   text-transform: none;
   text-overflow: ellipsis;
@@ -242,7 +254,7 @@ p {
 .entries .when {
   flex: none;
   color: var(--muted);
-  font: 0.85rem/1.9 var(--mono);
+  font: 0.85rem/var(--row-leading) var(--mono);
   font-variant-numeric: tabular-nums;
 }
 
